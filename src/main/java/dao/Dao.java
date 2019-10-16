@@ -3,17 +3,16 @@ package dao;
 import java.sql.SQLException;
 import java.util.List;
 
-public interface Dao<T> {
+public interface Dao<Entity,Key> {
 
-    //Table
-    void createTable();
-    void deleteTable();
+    void createTable() throws SQLException;
+    void deleteTable() throws SQLException;
 
-    //Entity
-    void add(T t) throws SQLException;
-    List<T> getAll() throws SQLException;
-    T getById(Long id) throws SQLException;
-    void update(T order) throws SQLException;
-    void remove(T order) throws SQLException;
+    List<Entity> getAll() throws SQLException;
+    Entity getById(Key key) throws SQLException;
+
+    void add(Entity entity) throws SQLException;
+    void update(Entity entity) throws SQLException;
+    void remove(Entity entity) throws SQLException;
 
 }

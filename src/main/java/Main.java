@@ -1,44 +1,57 @@
+import PostgreSqlJDBC_DAO.CarJDBC;
+import PostgreSqlJDBC_DAO.ClientJDBC;
+import PostgreSqlJDBC_DAO.OrderJDBC;
+import models.Car;
 import models.Client;
+import models.Order;
 
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
 
-//        List<Client> result = new ArrayList<Client>();
-//
-//        String SQL_SELECT = "Select * from client";
-//
-//        // auto close connection and preparedStatement
-//        try {
-//            Connection conn = DriverManager.getConnection(
-//                    "jdbc:postgresql://127.0.0.1:5432/autorent", "postgres", "george");
-//            PreparedStatement preparedStatement = conn.prepareStatement(SQL_SELECT);
-//
-//            ResultSet resultSet = preparedStatement.executeQuery();
-//
-//            while (resultSet.next()) {
-//
-//                int id = resultSet.getInt("id");
-//                String full_name = resultSet.getString("full_name");
-//                String category = resultSet.getString("license_category");
-//                int age = resultSet.getInt("age");
-//
-//                Client obj = new Client(id,full_name,category,age);
-//
-//                result.add(obj);
-//
-//            }
-//            result.forEach(x -> System.out.format("id: %s | name: %s\n", x.id, x.full_name));
-//
-//        } catch (SQLException e) {
-//            System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-
+        //Facade init
+        PostgreFacadeJDBCautorent postgreFacadeJDBCautorent = PostgreFacadeJDBCautorent.getInstance();
+        postgreFacadeJDBCautorent.initDb();
+        //Get Dao
+        ClientJDBC clientJDBC = postgreFacadeJDBCautorent.getClientDao();
+        CarJDBC carJDBC = postgreFacadeJDBCautorent.getCarDao();
+        OrderJDBC orderJDBC = postgreFacadeJDBCautorent.getOrderDao();
+        //Create models
+        //Clients
+        Client client0 = new Client(0,"George Borodin", "+38(095)7857774");
+        Client client1 = new Client(1,"Mike Aurelius", "+9(033)6573883");
+        Client client2 = new Client(2,"Steve Jobs", "+4(038)0990909");
+        //Cars
+        Car car0 = new Car(0,"BMW X5",249.99f);
+        Car car1 = new Car(1,"Audi V8",200.50f);
+        Car car2 = new Car(2,"TOYOTA Land Cruiser 200",450.00f);
+        //Orders
+        Order order0 = new Order(0,0,0);
+        Order order1 = new Order(1,2,2);
+        //Add to db
+        //Add clients
+        clientJDBC.add(client0);
+        clientJDBC.add(client1);
+        clientJDBC.add(client2);
+        //Add cars
+        carJDBC.add(car0);
+        carJDBC.add(car1);
+        carJDBC.add(car2);
+        //Add orders
+        orderJDBC.add(order0);
+        orderJDBC.add(order1);
+        //ShowDb
+        postgreFacadeJDBCautorent.displayDb();
+//        //Remove
+//        clientJDBC.remove(client1);
+//        carJDBC.remove(car1);
+//        orderJDBC.remove(order0);
+//        //ShowDb
+//        postgreFacadeJDBCautorent.displayDb();
+        //Facade delete
+        postgreFacadeJDBCautorent.deleteDb();
     }
 }

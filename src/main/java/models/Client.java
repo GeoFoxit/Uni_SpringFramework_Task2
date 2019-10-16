@@ -1,73 +1,37 @@
 package models;
 
-import java.util.Date;
-
 public class Client {
 
-    private String passportNumber;
-    private String fullName;
-    private Date birthDate;
-    private Integer taxNumber;
-    private Byte rate;
+    private Integer id;
+    private String name;
     private String phoneNumber;
 
-    public Client() {
-    }
+    public Client() {}
 
-    public Client(String passportNumber,
-                  String fullName,
-                  Date birthDate,
-                  Integer taxNumber,
-                  Byte rate,
-                  String phoneNumber) {
-        this.passportNumber = passportNumber;
-        this.fullName = fullName;
-        this. birthDate = birthDate;
-        this.taxNumber = taxNumber;
-        this.rate = rate;
+    public Client(Integer id, String name, String phoneNumber) {
+        this.id = id;
+        this.name = name;
         this.phoneNumber = phoneNumber;
     }
 
-    public String getPassportNumber() {
-        return passportNumber;
+    public void setId(Integer id) {
+        this.id = id;
     }
-    public void setPassportNumber(String passportNumber) {
-        this.passportNumber = passportNumber;
-    }
-
-    public String getFullName() {
-        return fullName;
-    }
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
+    public Integer getId() {
+        return id;
     }
 
-    public Date getBirthDate() {
-        return birthDate;
+    public void setName(String name) {
+        this.name = name;
     }
-    public void setBirthDate(Date birthDate) {
-        this.birthDate = birthDate;
-    }
-
-    public Integer getTaxNumber() {
-        return taxNumber;
-    }
-    public void setTaxNumber(Integer taxNumber) {
-        this.taxNumber = taxNumber;
+    public String getName() {
+        return name;
     }
 
-    public Byte getRate() {
-        return rate;
-    }
-    public void setRate(Byte rate) {
-        this.rate = rate;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
-
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
 }
