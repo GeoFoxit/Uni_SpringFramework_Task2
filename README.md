@@ -1,2 +1,2 @@
 # JavaSpring-PostgreSql
-Learning Java Spring framework and how it interacts with PostgreSQL DB
+Learning JDBC and how it interacts with PostgreSQL DB
