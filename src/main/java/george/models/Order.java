@@ -1,4 +1,4 @@
-package models;
+package george.models;
 
 public class Order {
 
