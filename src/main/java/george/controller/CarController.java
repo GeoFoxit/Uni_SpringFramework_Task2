@@ -1,6 +1,6 @@
 package george.controller;
 
-import george.dao.CarDao;
+import george.repositories.CarRepository;
 import george.models.Car;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -12,62 +12,43 @@ import java.util.*;
 public class CarController {
 
     @Autowired
-    CarDao carDao;
+    CarRepository carRepo;
 
     @GetMapping("")
-    public List<Car> getCars(@RequestParam(value = "id", required = false) Integer id) {
-        if (id == null) {
-            return carDao.getAll();
-        } else {
-            List<Car> cars = new ArrayList<Car>();
-            try {
-                Car car = carDao.getEntityById(id);
-                cars.add(car);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return cars;
-        }
-
+    public Iterable<Car> getCars(@RequestParam(value = "id", required = false) Integer id) {
+        if (id == null) { return carRepo.findAll(); }
+        List<Car> cars = new ArrayList<Car>();
+        Optional<Car> optionalCar= carRepo.findById(id);
+        if (optionalCar.isPresent()) { cars.add(optionalCar.get()); }
+        return cars;
     }
 
     @PostMapping("")
-    public Car addCar(@RequestParam(value = "id", required = true) int id,
-                      @RequestParam(value = "naming", required = true) String naming,
+    public Car addCar(@RequestParam(value = "naming", required = true) String naming,
                       @RequestParam(value = "price", required = true) float price){
-        Car car = new Car();
-        car.setId(id);
-        car.setNaming(naming);
-        car.setPrice(price);
-        carDao.insert(car);
+        Car car = new Car(naming,price);
+        carRepo.save(car);
         return car;
     }
 
     @DeleteMapping("")
-    public Car removeCar(@RequestParam(value = "id", required = true) Integer id) {
-        try {
-            Car car = carDao.getEntityById(id);
-            carDao.delete(id);
-            return car;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new Car();
-        }
+    public String removeCar(@RequestParam(value = "id", required = true) Integer id) {
+        carRepo.deleteById(id);
+        return "Deleted";
     }
 
     @PatchMapping("")
-    public Car updateCar(@RequestParam(value = "id", required = true) int id,
-                         @RequestParam(value = "naming", required = true) String naming,
-                         @RequestParam(value = "price", required = true) float price){
-        try {
-            Car car = carDao.getEntityById(id);
-            car.setNaming(naming);
-            car.setPrice(price);
-            carDao.update(car);
-            return car;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new Car();
+    public String updateCar(@RequestParam(value = "id", required = true) int id,
+                         @RequestParam(value = "naming", required = false) String naming,
+                         @RequestParam(value = "price", required = false) Float price) {
+        Optional<Car> optionalCar= carRepo.findById(id);
+        if (optionalCar.isPresent() && (naming != null || price != null)) {
+            Car car = optionalCar.get();
+            if (naming != null) { car.setNaming(naming); }
+            if (price != null) { car.setPrice(price); }
+            carRepo.save(car);
+            return "Updated";
         }
+        return "Unable to update";
     }
 }

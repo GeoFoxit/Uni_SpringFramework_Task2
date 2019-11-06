@@ -1,74 +1,56 @@
 package george.controller;
 
-import george.dao.OrderDao;
+import george.repositories.OrderRepository;
 import george.models.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/orders")
 public class OrderController {
 
     @Autowired
-    OrderDao orderDao;
+    OrderRepository orderRepo;
 
     @GetMapping("")
-    public List<Order> getOrders(@RequestParam(value = "id", required = false) Integer id) {
-        if (id == null) {
-            return orderDao.getAll();
-        } else {
-            List<Order> orders = new ArrayList<Order>();
-            try {
-                Order order = orderDao.getEntityById(id);
-                orders.add(order);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return orders;
-        }
-
+    public Iterable<Order> getOrders(@RequestParam(value = "id", required = false) Integer id) {
+        if (id == null) { return orderRepo.findAll(); }
+        List<Order> orders = new ArrayList<Order>();
+        Optional<Order> optionalOrder= orderRepo.findById(id);
+        if (optionalOrder.isPresent()) { orders.add(optionalOrder.get()); }
+        return orders;
     }
 
     @PostMapping("")
-    public Order addOrder(@RequestParam(value = "id", required = true) Integer id,
-                            @RequestParam(value = "carId", required = true) Integer carId,
+    public Order addOrder(@RequestParam(value = "carId", required = true) Integer carId,
                             @RequestParam(value = "clientId", required = true) Integer clientId){
-        Order order = new Order();
-        order.setId(id);
-        order.setCarId(carId);
-        order.setClientId(clientId);
-        orderDao.insert(order);
+        Order order = new Order(carId,clientId);
+        orderRepo.save(order);
         return order;
     }
 
     @DeleteMapping("")
-    public Order removeOrder(@RequestParam(value = "id", required = true) Integer id) {
-        try {
-            Order order = orderDao.getEntityById(id);
-            orderDao.delete(id);
-            return order;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new Order();
-        }
+    public String removeOrder(@RequestParam(value = "id", required = true) Integer id) {
+        orderRepo.deleteById(id);
+        return "Deleted";
     }
 
     @PatchMapping("")
-    public Order updateOrder(@RequestParam(value = "id", required = true) Integer id,
-                             @RequestParam(value = "carId", required = true) Integer carId,
-                             @RequestParam(value = "clientId", required = true) Integer clientId){
-        try {
-            Order order = orderDao.getEntityById(id);
-            order.setCarId(carId);
-            order.setClientId(clientId);
-            orderDao.update(order);
-            return order;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new Order();
+    public String updateOrder(@RequestParam(value = "id", required = true) Integer id,
+                             @RequestParam(value = "carId", required = false) Integer carId,
+                             @RequestParam(value = "clientId", required = false) Integer clientId) {
+        Optional<Order> optionalOrder= orderRepo.findById(id);
+        if (optionalOrder.isPresent() && (carId != null || clientId != null)) {
+            Order order = optionalOrder.get();
+            if (carId != null) { order.setCarId(carId); }
+            if (clientId != null) { order.setClientId(clientId); }
+            orderRepo.save(order);
+            return "Updated";
         }
+        return "Unable to update";
     }
 }

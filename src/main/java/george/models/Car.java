@@ -1,15 +1,21 @@
 package george.models;
 
-public class Car {
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
+@Entity
+public class Car {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
     private String naming;
     private Float price;
 
     public Car() {}
 
-    public Car(Integer id, String naming, Float price) {
-        this.id = id;
+    public Car(String naming, Float price) {
         this.naming = naming;
         this.price = price;
     }
